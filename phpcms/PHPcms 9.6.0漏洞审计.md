@@ -317,7 +317,7 @@ siteid=1&modelid=11&username=test&password=testxx&email=test@qq.com&info[content
 
 这里我选择phpstorm配合xdebug动态调试一波，看看漏洞点在哪。
 
-![8](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/8.png)
+![8](phpcms-pic/8.png)
 
 phpcms 注册在模块`/phpcms/modules/member` 的index.php文件中，找到register函数。
 
@@ -342,13 +342,13 @@ if($member_setting['choosemodel']) {
 
 这里我们下一个断点，动态调试下。
 
-![9](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/9.png)
+![9](phpcms-pic/9.png)
 
 通过payload，不难看出我们的 payload 在`$_POST['info']`里，而这里对`$_POST['info']`进行了处理，所以跟进一下。这里其实在通过`$_POST['info']`传入的时候针对其使用new_html_special_chars对<>进行编码之后。
 
 跟进$member_input->get函数，该函数位于caches/caches_model/caches_data/member_input.class.php中。
 
-![12](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/12.png)
+![12](phpcms-pic/12.png)
 
 这里我们可以看到，我们的payload是info[content]，所以调用的是editor函数。所以跟一下，editor函数。这个函数也在这个文件里的第59-66
 
@@ -363,7 +363,7 @@ function editor($field, $value) {
 	}
 ```
 
-![13](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/13.png)
+![13](phpcms-pic/13.png)
 
 然后这里就执行$this->attachment->download函数进行下载，我们继续跟进。
 
@@ -447,15 +447,15 @@ $remotefileurls = array_unique($remotefileurls);
 
 它的效果如下图，可以看到`.jpg`已经没有
 
-![15](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/15.png)
+![15](phpcms-pic/15.png)
 
 然后继续单步调试就很明显知道干了什么。
 
-![16](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/16.png)
+![16](phpcms-pic/16.png)
 
 这里就是通过程序调用copy函数，对远程的文件进行了下载，然后并且写入。这里其实已经告诉我们写的文件了。
 
-![17](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/17.png)
+![17](phpcms-pic/17.png)
 
 ### 如何测试获取上传地址
 
@@ -479,9 +479,9 @@ if(pc_base::load_config('system', 'phpsso')) {
 
 可以看到当$status > 0时会执行 SQL 语句进行 INSERT 操作，向数据库中插入数据，因为表中并没有content列，所以产生报错。
 
-![18](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/18.png)
+![18](phpcms-pic/18.png)
 
-![19](/Users/l1nk3r/Desktop/代码审计考核材料/phpcms/phpcms-pic/19.png)
+![19](phpcms-pic/19.png)
 
 在无法得到路径的情况下我们只能爆破了， 文件名生成的方法为:
 
