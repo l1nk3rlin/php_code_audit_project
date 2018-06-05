@@ -2,6 +2,8 @@
 
 ## SQL注入
 
+### 原理介绍
+
 复习这个洞的时候，之前别人分析过，漏洞点在`/phpcms/modules/content/down.php`文件中:
 
 ```php
@@ -306,6 +308,8 @@ if __name__ == '__main__':
 ```
 ## 任意文件文件上传
 
+### 原理介绍
+
 这里还有个文件上传漏洞，漏洞利用点是注册的地方，网上常见的一个payload:
 
 ```
@@ -345,6 +349,8 @@ if($member_setting['choosemodel']) {
 ![9](phpcms-pic/9.png)
 
 通过payload，不难看出我们的 payload 在`$_POST['info']`里，而这里对`$_POST['info']`进行了处理，所以跟进一下。这里其实在通过`$_POST['info']`传入的时候针对其使用new_html_special_chars对<>进行编码之后。
+
+![10](phpcms-pic/10.png)
 
 跟进$member_input->get函数，该函数位于caches/caches_model/caches_data/member_input.class.php中。
 
@@ -457,7 +463,11 @@ $remotefileurls = array_unique($remotefileurls);
 
 ![17](phpcms-pic/17.png)
 
-### 如何测试获取上传地址
+### 后记
+
+如何获取上传后的地址，这里有两种方法。
+
+#### 第一种
 
 ```php
 if(pc_base::load_config('system', 'phpsso')) {
@@ -481,7 +491,7 @@ if(pc_base::load_config('system', 'phpsso')) {
 
 ![18](phpcms-pic/18.png)
 
-![19](phpcms-pic/19.png)
+#### 第二种
 
 在无法得到路径的情况下我们只能爆破了， 文件名生成的方法为:
 
