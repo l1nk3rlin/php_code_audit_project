@@ -307,7 +307,7 @@ Connection: close
 
 这里的开头有一个`ob_start()`。在php.net上关于`ob_start`的解释是这样的。
 
-![9](/Users/l1nk3r/Desktop/代码审计考核材料/typecho/pic/9.png)
+![9](pic/9.png)
 
 因为我们上面对象注入的代码触发了原本的exception，导致`ob_end_clean()`执行，原本的输出会在缓冲区被清理。
 
@@ -458,11 +458,11 @@ public static function get()
 
 目的是为了查找Client/Adapter/目录下的两个文件，一个是curl.php，一个是socket.php。从Client/Adapter/目录中，添加这两个发起HTTP请求的类，一个是Curl，另一个是Socket。
 
-![10](/Users/l1nk3r/Desktop/代码审计考核材料/typecho/pic/10.png)
+![10](pic/10.png)
 
 回到XmlRpc.php,`$http->setTimeout(5)->send($source);`该行代码用上面返回的HTTP类调用send方法发起HTTP请求。跟进send函数
 
-![11](/Users/l1nk3r/Desktop/代码审计考核材料/typecho/pic/11.png)
+![11](pic/11.png)
 
 跟进httpsend函数，位置`var/Typecho/Http/Client/Adapter/Curl.php`
 
@@ -496,7 +496,7 @@ public function httpSend($url)
 
 这里梳理一下代码逻辑，这里有两种发起HTTP请求的办法，一种是Curl，另一种是fsockopen。如果Curl可用，则优先使用。如果cURL返回失败或者返回成功后但状态码不是200，返回`源地址服务器错误`。如果cURL返回成功，并且状态码为200，如果没有`x-pingback`头，返回`源地址不支持PingBack`，如果有`x-pingback`头，就继续往下判断。
 
-![12](/Users/l1nk3r/Desktop/代码审计考核材料/typecho/pic/12.png)
+![12](pic/12.png)
 
 POC：
 

@@ -4,7 +4,7 @@
 
 在删除之前发送了两个http请求，当中有`_wpnonce`参数。
 
-![1](/Users/l1nk3r/Desktop/代码审计考核材料/wordpress/1.png)
+![1](1.png)
 
 跟进`action=delete-post`，函数在wp-admin/includes/ajax-actions.php。
 
