@@ -23,3 +23,8 @@
 - **Typecho**
 - [x] [Typecho 审计](https://github.com/SukaraLin/php_code_audit_project/blob/master/typecho/typcho%20%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1.md)
 
+
+
+- **dedecms**
+- [x] [dedecms v5.7 sp2 代码审计](https://github.com/SukaraLin/php_code_audit_project/blob/master/dedecms/dedecms%20v5.7%20sp2%20%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1.md)
+
