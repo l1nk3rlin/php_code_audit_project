@@ -1,6 +1,68 @@
 # dedecms v5.7 sp2 代码审计
 
-## 任意文件上传2（file upload vulnerability）
+## 任意文件上传
+
+### 原理分析
+
+漏洞点在于include/helpers/upload.helper.php
+
+```php
+$fileurl = $filedir.'/'.$filename.'.'.$file_sname;
+$rs = move_uploaded_file($file_tmp, $cfg_basedir.$fileurl);
+if(!$rs) return -2;
+if($ftype=='image' && $watermark)
+{
+    WaterImg($cfg_basedir.$fileurl, 'up');
+}
+```
+
+跟进`image`发现，这里针对文件上传都是检查`mime`
+
+```php
+switch($this->attachinfo['mime'])
+{
+    case 'image/jpeg':
+        $this->imagecreatefromfunc = function_exists('imagecreatefromjpeg') ? 'imagecreatefromjpeg' : '';
+        $this->imagefunc = function_exists('imagejpeg') ? 'imagejpeg' : '';
+        break;
+    case 'image/gif':
+        $this->imagecreatefromfunc = function_exists('imagecreatefromgif') ? 'imagecreatefromgif' : '';
+        $this->imagefunc = function_exists('imagegif') ? 'imagegif' : '';
+        break;
+    case 'image/png':
+        $this->imagecreatefromfunc = function_exists('imagecreatefrompng') ? 'imagecreatefrompng' : '';
+        $this->imagefunc = function_exists('imagepng') ? 'imagepng' : '';
+        break;
+}//为空则匹配类型的函数不存在
+```
+
+这样就很好绕过了。这里看看那里功能调用这个上传。我们看到这里要想进入文件上传功能，这里有个if判断`if ( ! function_exists('AdminUpload'))`。如果有AdminUpload这个函数，就进入这个功能，所以要找到哪里调用这个功能。
+
+![1](pic/1.png)
+
+全局搜索这个函数在dede/archives_do.php 111行发现。
+
+![2](pic/2.png)
+
+要想进入这个功能，首先要让`$dopost=="uploadLitpic"`。而且这里也用到前端校验文件类型，并且最后还返回路径
+
+![7](pic/7.png)
+
+所以根据页面以及，php的路由找到了功能点。
+
+![3](pic/3.png)
+
+### poc构造
+
+![4](pic/4.png)
+
+![5](pic/5.png)
+
+![6](pic/6.png)
+
+
+
+## 任意文件上传2
 
 ### 原理分析
 
@@ -45,7 +107,7 @@ else if($fmdo=="upload")
 
 ![14](pic/14.png)
 
-## 任意写入文件（Any file write vulnerability）
+## 任意写入文件
 
 ### 原理分析
 
