@@ -42,4 +42,7 @@
 
 ![10](phpok/10.png)
 
-抓包修改`../../../phpok/index.txt`。 ![11](phpok/11.gif)
+抓包修改`../../../phpok/index.txt`![11](phpok/11.gif)
+
+
+
